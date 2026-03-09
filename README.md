@@ -25,7 +25,7 @@ Audible fails for some reason.
 
 ## Usage(s)
 ```
-bash AAXtoMP3 [-f|--flac] [-o|--opus] [-a|--aac] [-s|--single] [--level <COMPRESSIONLEVEL>] [-c|--chaptered] [-e:mp3] [-e:m4a] [-e:m4b] [-A|--authcode <AUTHCODE>] [-n|--no-clobber] [-t|--target_dir <PATH>] [-C|--complete_dir <PATH>] [-V|--validate] [--use-audible-cli-data]] [-d|--debug] [-h|--help] [--continue <CHAPTERNUMBER>] <AAX/AAXC INPUT_FILES>...
+bash AAXtoMP3 [-f|--flac] [-o|--opus] [-a|--aac] [-s|--single] [--level <COMPRESSIONLEVEL>] [-c|--chaptered] [-e:mp3] [-e:m4a] [-e:m4b] [-A|--authcode <AUTHCODE>] [-n|--no-clobber] [-t|--target_dir <PATH>] [-C|--complete_dir <PATH>] [-V|--validate] [--multipart] [--use-audible-cli-data]] [-d|--debug] [-h|--help] [--continue <CHAPTERNUMBER>] <AAX/AAXC INPUT_FILES>...
 ```
 or if you want to get guided through the options
 ```
@@ -49,6 +49,7 @@ bash interactiveAAXtoMP3 [-a|--advanced] [-h|--help]
 * **-s** or **--single**    Output a single file for the entire book. If you only want a single ogg file for instance.
 * **-c** or **--chaptered** Output a single file per chapter. The `--chaptered` will only work if it follows the `--aac -e:m4a -e:m4b --flac` options.
 * **--continue &lt;CHAPTERNUMBER&gt;**      If the splitting into chapters gets interrupted (e.g. by a weak battery on your laptop) you can go on where the process got interrupted. Just delete the last chapter (which was incompletely generated) and redo the task with "--continue &lt;CHAPTERNUMBER&gt;" where CHAPTERNUMBER is the chapter that got interrupted.
+* **--multipart**  Treat all passed input files as ordered parts of a single audiobook. Output stays in one shared directory, chapter numbering continues across files, and one combined `.m3u` playlist is written. This currently requires chaptered output and cannot be combined with `--continue`.
 * **--level &lt;COMPRESSIONLEVEL&gt;**      Set compression level. May be given for mp3, flac and opus.
 * **--keep-author &lt;FIELD&gt;**           If a book has multiple authors and you don't want all of them in the metadata, with this flag you can specify a specific author (1 is the first, 2 is the second...) to keep while discarding the others.
 * **--author &lt;AUTHOR&gt;**               Manually set the author metadata field, useful if you have multiple books of the same author but the name reported is different (eg. spacing, accents..). Has precedence over `--keep-author`.
@@ -133,6 +134,16 @@ __Note:__ At least one of the above must be exist if converting `aax` files. The
 * Default out put directory is the base directory of each file listed. Plus the genre, Artist and Title of the Audio Book.
 * The default codec is mp3
 * The default output is by chapter.
+
+### Multi-part audiobooks
+If one audiobook is split into several `.aax` or `.aaxc` files, pass them in the correct order together with `--multipart`.
+
+Example:
+```
+bash AAXtoMP3 --multipart Teil1.aax Teil2.aax Teil3.aax
+```
+
+In this mode AAXtoMP3 keeps writing into one album directory, continues chapter numbering across part boundaries, renames simple chapter titles such as `Kapitel 1` or `Chapter 1` to their global number, and appends all chapter files to one playlist.
 
 ### Custom naming scheme
 The following flags can modify the default naming scheme:
